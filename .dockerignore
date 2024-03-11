@@ -1,0 +1,6 @@
+.git/
+docker-compose.yml
+.env
+Dockerfile
+buildspec.yml
+

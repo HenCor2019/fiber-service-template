@@ -1,0 +1,109 @@
+---
+name: "Docker size"
+
+on:
+  push:
+    branches: ["develop"]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  calculate-base:
+    runs-on: ubuntu-latest
+    outputs:
+      image_size: ${{ steps.docker-base.outputs.image_size }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+      - name: Get commit short hash
+        id: commit
+        run: |
+          short=$(git rev-parse --short HEAD)
+          echo "short=$short" >> "$GITHUB_OUTPUT"
+      - name: 📦 Cache docker image for commit ${{ steps.commit.outputs.short }}
+        uses: actions/cache@v4
+        with:
+          path: base-docker-image.txt
+          key: base-docker-image-os-${{ runner.os }}-commit-${{ steps.commit.outputs.short }}
+      - name: 🐳 Calculate docker image size in ${{ github.base_ref }}
+        id: docker-base
+        run: |
+          if [ -f base-docker-image.txt ]; then
+            echo "Getting docker image from cache"
+            image_size=$(<base-docker-image.txt)
+          else
+            echo "Docker image not available in the cache"
+            docker build -t service . --target production
+            image_size=$(docker images service | awk 'NR==2 {print $NF}')
+          fi
+          echo "$image_size" > base-docker-image.txt
+          echo "image_size=$image_size" >> "$GITHUB_OUTPUT"
+  calculate-head:
+    runs-on: ubuntu-latest
+    outputs:
+      image_size: ${{ steps.docker-head.outputs.image_size }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: 🐳 Calculate docker image size in ${{ github.head_ref }}
+        id: docker-head
+        run: |
+          docker build -t service . --target production
+          image_size=$(docker images service | awk 'NR==2 {print $NF}')
+          echo "image_size=$image_size" >> "$GITHUB_OUTPUT"
+  write-comment:
+    runs-on: ubuntu-latest
+    needs: [calculate-base, calculate-head]
+    steps:
+      - uses: marocchino/sticky-pull-request-comment@v2
+        env:
+          BASE_DOCKER_IMAGE_SIZE: ${{needs.calculate-base.outputs.image_size}}
+          HEAD_DOCKER_IMAGE_SIZE: ${{needs.calculate-head.outputs.image_size}}
+        with:
+          header: <docker-image-size>
+          message: |
+            ## 🐳 Docker Metrics 🐳
+
+            * Size of the Docker Image in the base (${{ github.base_ref }}): **${{ env.BASE_DOCKER_IMAGE_SIZE }}**
+            * Size of the Docker Image in this branch (${{ github.head_ref }}): **${{ env.HEAD_DOCKER_IMAGE_SIZE }}**
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_REPO }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+    needs: [calculate-head]
+    steps:
+      - name: Set up Dockerfile
+        uses: actions/checkout@v4
+        if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Docker Buildx 😎
+        if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
+        run: echo "${{ env.DOCKERHUB_TOKEN }}" | docker login -u ${{ env.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Get commit hash 🐗
+        if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
+        id: commit_hash
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image 🍟
+        if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
+        run: |
+          docker build -t ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.commit_hash.outputs.COMMIT_HASH }} .
+          docker tag ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.commit_hash.outputs.COMMIT_HASH }} ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:latest
+
+      - name: Push Docker image to Docker Hub ✈️
+        if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
+        run: |
+          docker push ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.commit_hash.outputs.COMMIT_HASH }}
+          docker push ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:latest

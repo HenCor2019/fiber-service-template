@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+echo "FORMAT: go fmt"
+go fmt ./...
+
+echo "LINTING FIX: golangci-lint"
+golangci-lint run --fix ./...
+
+echo "TEST: go test"
+go test ./...

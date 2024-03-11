@@ -1,0 +1,26 @@
+run:
+  concurrency: 4
+  deadline: 5m
+
+golint:
+  min-confidence: 0.8 
+  skip-dirs-use-default: true 
+
+linter-settings:
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+
+linters:
+  enable:
+    - govet
+    - gocyclo
+    - goimports
+    - goconst
+
+issues:
+  exclude-use-default: false
+  exclude-rules:
+    - path: _test.go
+      linters:
+        - errcheck

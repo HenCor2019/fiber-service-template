@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: poke-golang-api
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 512M
+        reservations:
+          cpus: 0.25
+          memory: 128M
+    build:
+      context: .
+      dockerfile: .
+      target: build
+    command: make start
+    volumes:
+      - .:/go/app/api
+    ports:
+      - ${PORT}:${PORT}
+      - ${DEBUG_SERVER_PORT}:${DEBUG_SERVER_PORT}
+    env_file:
+      - .env

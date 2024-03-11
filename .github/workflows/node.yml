@@ -1,0 +1,151 @@
+---
+name: "Node"
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
+      - unlabeled
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Install pnpm 🐒
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Setup Node ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Get pnpm store directory 🍟
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
+
+      - name: Cache Dependencies ⌛️
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/node.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies 📥
+        # if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          # Bellow npm install is a workaround for https://github.com/swc-project/swc/issues/5616#issuecomment-1651214641
+          pnpm install --save-optional \
+            "@swc/core-linux-x64-gnu@1" \
+            "@swc/core-linux-x64-musl@1"
+      - name: Lint code 💅
+        run: pnpm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Install pnpm 🐒
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Setup Node ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Get pnpm store directory 🍟
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
+
+      - name: Cache Dependencies ⌛️
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/node.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies 📥
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          # Bellow npm install is a workaround for https://github.com/swc-project/swc/issues/5616#issuecomment-1651214641
+          pnpm install --save-optional \
+            "@swc/core-linux-x64-gnu@1" \
+            "@swc/core-linux-x64-musl@1"
+
+      - name: Run tests ✅
+        run: pnpm run test
+
+      - name: Save Cache Dependencies ⌛️
+        uses: actions/cache@v4
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/node.yml') }}
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Install pnpm 🐒
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
+
+      - name: Setup Node ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Get pnpm store directory 🍟
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_ENV"
+
+      - name: Cache Dependencies ⌛️
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/node.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies 📥
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          # Bellow npm install is a workaround for https://github.com/swc-project/swc/issues/5616#issuecomment-1651214641
+          pnpm install --save-optional \
+            "@swc/core-linux-x64-gnu@1" \
+            "@swc/core-linux-x64-musl@1"
+
+      - name: Build typescript 📦
+        run: pnpm run build && find dist/main.js
