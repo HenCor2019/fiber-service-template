@@ -21,6 +21,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -32,18 +33,10 @@ jobs:
         with:
           go-version: go.mod
 
-      - name: Cache linter 💅
-        with:
-        path: ~/.cache/golangci-lint
-        key: golangci-lint-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          golangci-lint-${{ runner.os }}-
-
       - name: Install linter 💅
-        run: |
-          if [ ! -f ~/.cache/golangci-lint/golangci-lint ]; then
-             curl -sSfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.42.1
-          fi
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.54
 
       - name: Run golangci-lint
         run: golangci-lint run ./...
