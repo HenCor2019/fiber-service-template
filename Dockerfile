@@ -20,7 +20,6 @@ COPY . "$DIR"/
 
 EXPOSE ${PORT}
 
-# CMD ["air", "-c", ".air.toml"]
 CMD ["air", "-c", ".air.toml"]
 
 FROM base AS build
