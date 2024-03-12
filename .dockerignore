@@ -1,11 +1,14 @@
-.git/
-docker-compose.yml
-.env
-Dockerfile
-./pipeline/buildspec.yml
-.hooks/
-tmp/
-.gitignore
-.golangci-yml
-Makefile
+# Ignore all files
+*
 
+# Required files
+!/go.mod
+!/go.sum
+!/api/
+!/middleware/
+!/internal/
+!/cmd/
+!/.air.toml
+
+# Ignore test
+internal/**/services/*_test.go
