@@ -11,7 +11,8 @@ FROM base AS dev
 COPY go.mod $DIR
 COPY go.sum $DIR
 
-RUN go mod download
+RUN go install github.com/cosmtrek/air@v1.40.2 && \
+    go mod download
 
 COPY . $DIR/
 
