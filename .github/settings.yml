@@ -1,9 +1,9 @@
 ---
 repository:
-  name: nestjs-service-template
-  description: Template for new services based on NestJS with the Best Practices and Ready for Production
-  homepage: github.com/AlbertHernandez/nestjs-service-template
-  topics: nodejs, template, typescript, nestjs-template, nestjs
+  name: fiber-service-template
+  description: Template for new services based on Fiber with the Best Practices and Ready for Production
+  homepage: github.com/HenCor2019/fiber-service-template
+  topics: golang, template, go, fiber-template
   has_wiki: false
   private: false
   has_issues: true

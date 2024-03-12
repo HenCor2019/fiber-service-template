@@ -2,5 +2,10 @@
 docker-compose.yml
 .env
 Dockerfile
-buildspec.yml
+./pipeline/buildspec.yml
+.hooks/
+tmp/
+.gitignore
+.golangci-yml
+Makefile
 
