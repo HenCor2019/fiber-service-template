@@ -3,8 +3,8 @@ run:
   deadline: 5m
 
 golint:
-  min-confidence: 0.8 
-  skip-dirs-use-default: true 
+  min-confidence: 0.8
+  skip-dirs-use-default: true
 
 linter-settings:
   goconst:
