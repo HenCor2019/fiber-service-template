@@ -4,6 +4,9 @@ extends: default
 
 ignore: |
   node_modules/
+  Makefile
+  go.mod
+  go.sum
 
 rules:
   line-length:

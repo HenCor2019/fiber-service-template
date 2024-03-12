@@ -15,7 +15,7 @@ jobs:
           access_token: ${{ github.token }}
 
   docker:
-    name: Lint dockerfile
+    name: Lint dockerfile 🍟
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
       - name: Build dockerfile
         run: docker build . -t service
   pr:
-    name: Validate PR title
+    name: Validate PR title 😓
     runs-on: ubuntu-latest
     steps:
       - uses: amannn/action-semantic-pull-request@v5
@@ -58,12 +58,13 @@ jobs:
           header: pr-title-lint-error
           delete: true
   dotenv:
-    name: Lint dotenv
+    name: Lint dotenv 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install dotenv
         run: curl -sSfL https://git.io/JLbXn | sh -s -- -b usr/local/bin v3.3.0
+
       - name: Run dotenv
         run: usr/local/bin/dotenv-linter
   actionlint:
