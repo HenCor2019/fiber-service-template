@@ -93,7 +93,7 @@ jobs:
 
       - name: Set up Docker Buildx 😎
         if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
