@@ -6,7 +6,6 @@ import (
 
 	health_rts "github.com/HenCor2019/fiber-service-template/api/v1/health"
 	"github.com/HenCor2019/fiber-service-template/middleware/notfound"
-	"github.com/joho/godotenv"
 	"github.com/spf13/cast"
 
 	"github.com/gofiber/fiber/v2"
@@ -28,7 +27,6 @@ func New(
 func (api *API) Start(app *fiber.App) error {
 	app.Use(recover.New())
 
-	godotenv.Load()
 	v1 := app.Group("api/v1")
 	v1.Route("healthcheck", api.HealtRts.Routes)
 

@@ -18,7 +18,7 @@
 
 For different projects I have been using go and [AlbertHernandez](https://github.com/AlbertHernandez) shared a template for nestjs, I decided to have an idea based on his project to provide a golang project using fiber as a web framework. . to start using it, this project is strictly based on [nestjs-service-template](https://github.com/AlbertHernandez/nestjs-service-template)
 
-# Credits
+## 🎖️ Credits
 
 This project is based on the original implementation by [AlbertHernandez](https://github.com/AlbertHernandez), which was written in **Typescript**. We would like to thank AlbertHernandez for their inspiration.
 
