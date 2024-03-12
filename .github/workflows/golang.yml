@@ -1,0 +1,80 @@
+---
+name: "Golang"
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
+      - unlabeled
+
+jobs:
+  check_skip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Setup Go 🐬
+        uses: actions/setup-go@v5
+        with:
+          go-version: go.mod
+
+      - name: Cache linter 💅
+        with:
+        path: ~/.cache/golangci-lint
+        key: golangci-lint-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          golangci-lint-${{ runner.os }}-
+
+      - name: Install linter 💅
+        run: |
+          if [ ! -f ~/.cache/golangci-lint/golangci-lint ]; then
+             curl -sSfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.42.1
+          fi
+
+      - name: Run golangci-lint
+        run: golangci-lint run ./...
+
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Setup Go 🐬
+        uses: actions/setup-go@v5
+        with:
+          go-version: go.mod
+
+      - name: Run tests ✅
+        run: go test ./...
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Setup Go 🐬
+        uses: actions/setup-go@v5
+        with:
+          go-version: go.mod
+
+      - name: Build golang 📦
+        run:  go build -ldflags="-w -s" \ -o binary cmd/app && binary
