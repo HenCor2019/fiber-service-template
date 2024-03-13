@@ -3,7 +3,7 @@ name: "Docker"
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["develop", "main"]
 
 permissions:
   pull-requests: write
@@ -77,6 +77,23 @@ jobs:
 
             * Size of the Docker Image in the base (${{ github.base_ref }}): **${{ env.BASE_DOCKER_IMAGE_SIZE }}**
             * Size of the Docker Image in this branch (${{ github.head_ref }}): **${{ env.HEAD_DOCKER_IMAGE_SIZE }}**
+
+---
+name: "Docker"
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  check_skip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+
   build-and-push-image:
     runs-on: ubuntu-latest
     env:

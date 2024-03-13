@@ -3,7 +3,7 @@ name: "Golang"
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["develop", "main"]
   pull_request:
     branches: ["develop"]
     types:
