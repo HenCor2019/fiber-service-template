@@ -39,7 +39,7 @@ jobs:
           version: v1.54
 
       - name: Run golangci-lint
-        run: golangci-lint run ./...
+        run: make lint
 
   test:
     runs-on: ubuntu-latest
@@ -53,7 +53,10 @@ jobs:
           go-version: 1.19
 
       - name: Run tests ✅
-        run: go test ./...
+        run: make start.test
+
+      - name: Run project coverage ✅
+        run: make test.cov
 
   build:
     needs: [lint, test]

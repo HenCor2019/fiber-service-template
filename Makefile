@@ -1,5 +1,6 @@
 SHELL=/bin/bash
-TEST_COVERAGE_THRESHOLD=80
+COVERAGE_THRESHOLD=80
+COVERAGE_FILE=coverage.out
 COVER_MODULES = ./api/users/services/ ./api/tasks/services/ ./api/pokemons/services/
 
 start:
@@ -15,23 +16,20 @@ lint:
 	@echo "FORMATTING"
 	go fmt ./...
 	@echo "LINTING: golangci-lint"
-	golangci-lint run .
+	golangci-lint run --fix ./...
 
 start.test:
 	go test -v ./...
 
-cover:
-	@$(foreach dir,$(COVER_MODULES), \
-		(cd $(dir) && \
-		echo "[cover] $(dir)" && \
-		go test  -coverprofile=cover.out -coverpkg=./... ./... && \
-		go tool cover -html=cover.out -o cover.html) &&) true
-
 test.cov:
-		go test ./... -coverprofile=coverage.out
-		coverage=$$(go tool cover -func=coverage.out | grep total | grep -Eo '[0-9]+\.[0-9]+') ;\
-		rm coverage.out ;\
-		if [ $$(bc <<< "$$coverage < $(TEST_COVERAGE_THRESHOLD)") -eq 1 ]; then \
-						echo "Low test coverage: $$coverage < $(TEST_COVERAGE_THRESHOLD)" ;\
-						exit 1 ;\
-		fi
+		go test -coverprofile="$(COVERAGE_FILE)" ./internal/... >/dev/null && \
+			coverage=$$(go tool cover -func="$(COVERAGE_FILE)" | grep total | awk '{print $$3}' | sed 's/%//') && \
+			if [ $$(echo "$$coverage < $(COVERAGE_THRESHOLD)" | bc -l) -eq 1 ]; then \
+				rm "$(COVERAGE_FILE)"; \
+				echo "Cannot push due to insufficient code coverage."; \
+				echo "Current coverage: $(COVERAGE_THRESHOLD)% ($$coverage%)"; \
+				exit 1; \
+			else \
+				echo "The code coverage is sufficient: $(COVERAGE_THRESHOLD)% ($$coverage%)"; \
+				rm "$(COVERAGE_FILE)"; \
+			fi
