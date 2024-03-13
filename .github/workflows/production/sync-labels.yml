@@ -1,5 +1,5 @@
 ---
-name: 'Sync labels'
+name: 'Production CI: Sync labels'
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    tags:
+      - production
     steps:
       - uses: actions/checkout@v4
       - uses: micnncim/action-label-syncer@v1

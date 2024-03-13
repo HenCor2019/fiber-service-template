@@ -1,5 +1,5 @@
 ---
-name: "Lint project"
+name: "Development CI: Lint project"
 
 on:
   pull_request:
@@ -8,6 +8,8 @@ on:
 jobs:
   check_skip:
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -16,6 +18,8 @@ jobs:
 
   docker:
     name: Lint dockerfile 🍟
+    tags:
+      - development
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +31,8 @@ jobs:
         run: docker build . -t service
   pr:
     name: Validate PR title 😓
+    tags:
+      - development
     runs-on: ubuntu-latest
     steps:
       - uses: amannn/action-semantic-pull-request@v5
@@ -60,6 +66,8 @@ jobs:
   dotenv:
     name: Lint dotenv
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - uses: actions/checkout@v4
       - name: Install dotenv
@@ -69,6 +77,8 @@ jobs:
         run: usr/local/bin/dotenv-linter
   actionlint:
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - uses: actions/checkout@v4
       - name: Download actionlint
@@ -80,6 +90,8 @@ jobs:
         shell: bash
   yamlint:
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - uses: actions/checkout@v4
       - name: Install yamllint

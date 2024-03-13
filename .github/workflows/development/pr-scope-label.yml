@@ -1,5 +1,5 @@
 ---
-name: 'PR Scope label'
+name: 'Development CI: PR Scope label'
 
 on:
   pull_request_target:
@@ -10,6 +10,8 @@ jobs:
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - uses: actions/labeler@v5
         with:

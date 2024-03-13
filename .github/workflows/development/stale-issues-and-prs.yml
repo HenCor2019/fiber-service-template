@@ -1,5 +1,5 @@
 ---
-name: 'Close stale issues and PRs'
+name: 'Development CI: Close stale issues and PRs'
 
 on:
   schedule:
@@ -8,6 +8,8 @@ on:
 jobs:
   stale:
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - uses: actions/stale@v9
         with:

@@ -1,5 +1,5 @@
 ---
-name: "Greetings"
+name: "Development CI: Greetings"
 
 on:
   pull_request:
@@ -9,6 +9,8 @@ on:
 jobs:
   greeting:
     runs-on: ubuntu-latest
+    tags:
+      - development
     permissions:
       issues: write
       pull-requests: write

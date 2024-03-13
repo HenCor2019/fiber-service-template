@@ -1,5 +1,5 @@
 ---
-name: "PR Size Labeler"
+name: "Development CI: PR Size Labeler"
 
 on:
   pull_request:
@@ -8,6 +8,8 @@ on:
 jobs:
   labeler:
     runs-on: ubuntu-latest
+    tags:
+      - development
     name: Label the PR size
     steps:
       - uses: codelytv/pr-size-labeler@v1

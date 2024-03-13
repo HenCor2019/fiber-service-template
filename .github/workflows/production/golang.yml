@@ -1,21 +1,16 @@
 ---
-name: "Golang"
+name: "Production CI: Golang"
 
 on:
   push:
-    branches: ["develop"]
-  pull_request:
-    branches: ["develop"]
-    types:
-      - opened
-      - edited
-      - synchronize
-      - labeled
-      - unlabeled
+    branches:
+      - main
 
 jobs:
   check_skip:
     runs-on: ubuntu-latest
+    tags:
+      - production
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1

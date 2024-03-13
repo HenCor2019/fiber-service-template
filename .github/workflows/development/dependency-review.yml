@@ -1,5 +1,5 @@
 ---
-name: "Dependency Review"
+name: "Development CI: Dependency Review"
 
 on:
   pull_request:
@@ -12,6 +12,8 @@ permissions:
 jobs:
   dependency-review:
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - name: "Checkout Repository"
         uses: actions/checkout@v4

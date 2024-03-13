@@ -1,5 +1,5 @@
 ---
-name: 'Todo to issue'
+name: 'Production CI: Todo to issue'
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    tags:
+      - production
     steps:
       - uses: actions/checkout@v4
       - name: "TODO to Issue"

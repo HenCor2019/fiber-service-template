@@ -1,0 +1,83 @@
+---
+name: "Development CI: Golang"
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop"]
+    types:
+      - opened
+      - edited
+      - synchronize
+      - labeled
+      - unlabeled
+
+jobs:
+  check_skip:
+    runs-on: ubuntu-latest
+    tags:
+      - development
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+
+  lint:
+    runs-on: ubuntu-latest
+    tags:
+      - development
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Setup Go 🐬
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.19
+
+      - name: Install linter 💅
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.54
+
+      - name: Run golangci-lint
+        run: make lint
+
+  test:
+    runs-on: ubuntu-latest
+    tags:
+      - development
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Setup Go 🐬
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.19
+
+      - name: Run tests ✅
+        run: make start.test
+
+      - name: Run project coverage ✅
+        run: make test.cov
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    tags:
+      - development
+    steps:
+      - name: Checkout 🛬
+        uses: actions/checkout@v4
+
+      - name: Setup Go 🐬
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.19
+
+      - name: Build golang 📦
+        run: |
+           go build -o main cmd/app/main.go && find main

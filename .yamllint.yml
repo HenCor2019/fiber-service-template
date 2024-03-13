@@ -9,11 +9,11 @@ ignore: |
 rules:
   line-length:
     ignore: |
-      /.github/workflows/*.yaml
-      /.github/workflows/*.yml
+      /.github/workflows/**/*.yaml
+      /.github/workflows/**/*.yml
       /.github/settings.yml
       ./pipeline/*.yml
   truthy:
     ignore: |
-      /.github/workflows/*.yaml
-      /.github/workflows/*.yml
+      /.github/workflows/**/*.yaml
+      /.github/workflows/**/*.yml

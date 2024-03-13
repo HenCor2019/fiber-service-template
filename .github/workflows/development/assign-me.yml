@@ -1,5 +1,5 @@
 ---
-name: "Assign me"
+name: "Development CI: Assign me"
 
 on:
   pull_request:
@@ -8,6 +8,8 @@ on:
 jobs:
   set_assignee:
     runs-on: ubuntu-latest
+    tags:
+      - development
     steps:
       - uses: actions/github-script@v7
         if: github.actor != 'dependabot[bot]'
