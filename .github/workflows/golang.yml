@@ -55,7 +55,7 @@ jobs:
       - name: Run tests ✅
         run: make start.test
 
-      - name: Run tests ✅
+      - name: Run project coverage ✅
         run: make test.cov
 
   build:
