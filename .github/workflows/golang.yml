@@ -3,7 +3,7 @@ name: "Golang"
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["develop", "main"]
   pull_request:
     branches: ["develop"]
     types:
@@ -36,7 +36,7 @@ jobs:
       - name: Install linter 💅
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v1.54
+          version: v1.53.3
 
       - name: Run golangci-lint
         run: make lint
