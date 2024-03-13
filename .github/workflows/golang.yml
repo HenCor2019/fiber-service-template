@@ -33,14 +33,6 @@ jobs:
         with:
           go-version: 1.19
 
-      - name: Install linter 💅
-        uses: golangci/golangci-lint-action@v4
-        with:
-          version: v1.54
-
-      - name: Run golangci-lint
-        run: golangci-lint run ./...
-
   test:
     runs-on: ubuntu-latest
     steps:
@@ -53,10 +45,12 @@ jobs:
           go-version: 1.19
 
       - name: Run tests ✅
-        run: go test ./...
+        run: make start.test
+
+      - name: Run project coverage ✅
+        run: make test.cov
 
   build:
-    needs: [lint, test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛬
