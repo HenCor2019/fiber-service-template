@@ -20,7 +20,6 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_REPO }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-    needs: [calculate-head]
     steps:
       - name: Set up Dockerfile
         uses: actions/checkout@v4
