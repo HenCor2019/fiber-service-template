@@ -4,8 +4,6 @@ name: "Deploy Docker"
 on:
   push:
     branches: ["main", "develop"]
-  pull_request:
-    branches: ["main"]
 
 jobs:
   check_skip:
@@ -42,10 +40,13 @@ jobs:
         id: image_tag
         run: |
           if [ "${GITHUB_REF##*/}" = "main" ]; then
-            prefix="prd"
+            echo "Getting docker prefix tag from production"
+            echo prefix="prd"
           elif [ "${GITHUB_REF##*/}" = "develop" ]; then
-            prefix="dev"
+            echo "Getting docker prefix from development"
+            echo prefix="dev"
           fi
+          echo "Getting docker image tag using commit hash"
           echo "IMAGE_TAG=$prefix-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Build Docker image 🍟
