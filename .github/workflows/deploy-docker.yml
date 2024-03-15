@@ -3,7 +3,7 @@ name: "Deploy Docker"
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "develop"]
 
 jobs:
   check_skip:
@@ -35,19 +35,25 @@ jobs:
         if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
         run: echo "${{ env.DOCKERHUB_TOKEN }}" | docker login -u ${{ env.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Get commit hash 🐗
+      - name: Get commit hash and use it to create a tag 🐗
         if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
-        id: commit_hash
-        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        id: image_tag
+        run: |
+          if [ "${GITHUB_REF##*/}" = "main" ]; then
+            echo "IMAGE_PREFIX=prd" >> $GITHUB_OUTPUT
+          elif [ "${GITHUB_REF##*/}" = "develop" ]; then
+            echo "IMAGE_PREFIX=dev" >> $GITHUB_OUTPUT
+          fi
+          echo "IMAGE_TAG=$IMAGE_PREFIX-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Build Docker image 🍟
         if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
         run: |
-          docker build -t ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.commit_hash.outputs.COMMIT_HASH }} .
-          docker tag ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.commit_hash.outputs.COMMIT_HASH }} ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:latest
+          docker build -t ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.image_tag.outputs.IMAGE_TAG }} .
+          docker tag ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.image_tag.outputs.IMAGE_TAG }} ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:latest
 
       - name: Push Docker image to Docker Hub ✈️
         if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
         run: |
-          docker push ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.commit_hash.outputs.COMMIT_HASH }}
+          docker push ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:${{ steps.image_tag.outputs.IMAGE_TAG }}
           docker push ${{ env.DOCKERHUB_USERNAME}}/${{ env.DOCKERHUB_REPO }}:latest
