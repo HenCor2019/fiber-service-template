@@ -12,6 +12,7 @@ WORKDIR $DIR
 FROM base AS dev
 
 COPY go.* "$DIR"/
+COPY cmd "$DIR"/
 
 RUN go install github.com/cosmtrek/air@"$AIR_VERSION" && \
     go mod download
@@ -25,6 +26,7 @@ CMD ["air", "-c", ".air.toml"]
 FROM base AS build
 
 COPY go.* "$DIR"/
+COPY cmd "$DIR"/
 
 RUN go mod download
 
@@ -43,11 +45,10 @@ EXPOSE ${PORT}
 CMD ["/go/bin/binary"]
 
 FROM gcr.io/distroless/static-debian12:nonroot AS production
+LABEL maintainer="Henry Cortez"
+LABEL description="Template for the Go API"
 USER nonroot:nonroot
 
-COPY internal "$DIR"/internal
-COPY cmd "$DIR"/cmd
-
-COPY --from=staging --chown=nonroot:nonroot /go/bin/binary /go/bin/binary
+COPY --from=build --chown=nonroot:nonroot /go/bin/binary /go/bin/binary
 
 ENTRYPOINT ["/go/bin/binary"]
