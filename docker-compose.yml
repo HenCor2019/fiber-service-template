@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   app:
-    container_name: fiber-service-template
+    container_name: fiber-service-template-dev
     restart: unless-stopped
     deploy:
       resources:

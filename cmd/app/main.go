@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
+	"net/http"
 
 	health_cntlr "github.com/HenCor2019/fiber-service-template/internal/health/controllers"
 	health_svc "github.com/HenCor2019/fiber-service-template/internal/health/services"
 
+	"github.com/HenCor2019/fiber-service-template/api/config"
 	v1 "github.com/HenCor2019/fiber-service-template/api/v1"
 	health_rts "github.com/HenCor2019/fiber-service-template/api/v1/health"
 
-	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 )
 
@@ -24,7 +25,8 @@ func main() {
 
 		fx.Provide(
 			v1.New,
-			fiber.New,
+			http.NewServeMux,
+			config.New,
 		),
 
 		fx.Invoke(setLifeCycle),
@@ -36,11 +38,11 @@ func main() {
 func setLifeCycle(
 	lc fx.Lifecycle,
 	a *v1.API,
-	app *fiber.App,
+	router *config.RouteBundle,
 ) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			go a.Start(app) // nolint
+			go a.Start(router) // nolint
 
 			return nil
 		},
