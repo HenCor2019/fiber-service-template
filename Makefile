@@ -1,7 +1,6 @@
 SHELL=/bin/bash
 COVERAGE_THRESHOLD=80
 COVERAGE_FILE=coverage.out
-COVER_MODULES = ./api/users/services/ ./api/tasks/services/ ./api/pokemons/services/
 
 start:
 	go run .
