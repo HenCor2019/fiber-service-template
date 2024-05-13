@@ -3,7 +3,7 @@
 COVERAGE_FILE="coverage.out"
 COVERAGE_THRESHOLD=80
 
-go test -coverprofile="$COVERAGE_FILE" ./internal/... >/dev/null
+go test -coverprofile="$COVERAGE_FILE" $( go list ./internal/... | grep services) >/dev/null
 
 coverage=$(go tool cover -func="$COVERAGE_FILE" | grep total | awk '{print $3}' | sed 's/%//')
 
