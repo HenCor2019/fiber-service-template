@@ -16,6 +16,9 @@ import (
 
 func main() {
 	appModule := fx.Options(
+		fx.Provide(
+			config.InitLogger,
+		),
 
 		fx.Provide(
 			health_rts.New,
