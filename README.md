@@ -5,7 +5,7 @@
 <h1 align="center">⭐ Fiber Service Template ⭐</h1>
 
 <p align="center">
-  Template for new services based on Fiber with the Best Practices and Ready for Production
+  Template for new services based on HTTP with the Best Practices and Ready for Production
 </p>
 
 <p align="center">

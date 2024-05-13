@@ -1,7 +1,7 @@
-FROM golang:1.19-alpine AS base
+FROM golang:1.22.3-alpine AS base
 ARG PORT
 
-ENV GIT_VERSION 2.40.1-r0
+ENV GIT_VERSION 2.43.0-r0
 ENV AIR_VERSION v1.40.2
 ENV DIR $GOPATH/app/api
 

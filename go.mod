@@ -1,26 +1,21 @@
 module github.com/HenCor2019/fiber-service-template
 
-go 1.19
+go 1.22
+
+toolchain go1.22.3
 
 require (
-	github.com/gofiber/fiber/v2 v2.38.1
-	github.com/spf13/cast v1.5.0
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/fx v1.18.2
 )
 
 require (
-	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/klauspost/compress v1.15.0 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/stretchr/objx v0.4.0 // indirect
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.40.0 // indirect
-	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/dig v1.15.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
