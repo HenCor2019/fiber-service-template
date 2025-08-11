@@ -18,7 +18,7 @@ jobs:
     name: Lint dockerfile 🍟
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hadolint/hadolint-action@v3.1.0
         id: hadolint
         with:
@@ -61,7 +61,7 @@ jobs:
     name: Lint dotenv
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install dotenv
         run: curl -sSfL https://git.io/JLbXn | sh -s -- -b usr/local/bin v3.3.0
 
@@ -70,7 +70,7 @@ jobs:
   actionlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Download actionlint
         id: get_actionlint
         run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash) 1.6.26
@@ -81,7 +81,7 @@ jobs:
   yamlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install yamllint
         run: pip install yamllint
       - name: Lint YAML files
