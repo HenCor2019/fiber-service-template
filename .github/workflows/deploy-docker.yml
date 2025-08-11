@@ -22,7 +22,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     steps:
       - name: Set up Dockerfile
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         if: ${{ env.DOCKERHUB_TOKEN && env.DOCKERHUB_REPO && env.DOCKERHUB_USERNAME }}
         with:
           ref: ${{ github.head_ref }}
